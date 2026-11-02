@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>About Roadster</title>
+<link rel="stylesheet" href="roadster.css">
+</head>
+<body>
+<!-- The About window (the small link at the bottom of the panel): credits the CC BY licence requires, and the brand. -->
+<div id="root"></div>
+<script src="mock.js"></script>
+<script>
+  const root = document.getElementById("root");
+  root.className = theme;
+  root.innerHTML = `<div class="scene" id="board" style="width:440px">${menubar({ open: false })}
+    <div style="display:flex;justify-content:center;padding:36px 0 48px">
+      <div class="window about">
+        <div class="titlebar"><i></i><i class="min"></i><i class="max"></i></div>
+        <img class="app-icon" src="icon/app-icon-placeholder.svg" alt="">
+        <h1>Roadster</h1>
+        <div class="ver">Version 1.0</div>
+        <div class="credits">
+          <div class="brandline">VALENTIN STE</div>
+          <div>Car model: “Tesla Roadster 2020” by <a href="#">metarex.4d</a> on Sketchfab, licensed under <a href="#">CC BY 4.0</a>. Changed: scaled, new paint and glass, nozzles added.</div>
+          <div>Sounds: Freesound, CC0.</div>
+          <div>Not affiliated with Tesla, Inc.</div>
+        </div>
+        <div class="copy">© 2026 VALENTIN STE</div>
+      </div>
+    </div></div>`;
+</script>
+</body>
+</html>

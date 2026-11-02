@@ -1,0 +1,215 @@
+/* Roadster for Mac, design mock-ups (version 1). The tokens, the switch, the cards, the group titles and the
+   shadows are those of Just the Video's popup (the author's browser extension), so the two products look like
+   one family. Light is the default, .dark on any element is the dark theme under it. */
+
+:root {
+  --bg: #F2F2F7; --card: #FFFFFF; --menu: #FFFFFF; --text: #1C1C1E; --sub: #6B6B70;
+  --sep: #E5E5EA; --off: #E3E3E8; --chev: #8A8A8F; --btn: #E3E3E8;
+  --green: #34C759;
+  --border: rgba(0, 0, 0, 0.12);
+  --pick: rgba(0, 0, 0, 0.05);
+  --menu-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+  --knob-x: 20px;
+  --ls: 0.4px;
+  /* Roadster's own: the pomodoro phases, the field, the system blue of the alert, the desktop */
+  --work: #FF6B4A; --break: #34C759;
+  --field: #FFFFFF; --field-border: rgba(0, 0, 0, 0.16);
+  --blue: #007AFF;
+  --bar: rgba(246, 246, 246, 0.92); --bar-ink: rgba(0, 0, 0, 0.85); --bar-pick: rgba(0, 0, 0, 0.11);
+  --desk: linear-gradient(160deg, #C9D6E3 0%, #DCD3E6 55%, #E9DCCB 100%);
+  --window-shadow: 0 22px 56px rgba(0, 0, 0, 0.30), 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+  color-scheme: light;
+}
+.dark {
+  --bg: #000000; --card: #1C1C1E; --menu: #2C2C2E; --text: #F5F5F7; --sub: #98989F;
+  --sep: #38383A; --off: #39393D; --chev: #6E6E73; --btn: #3A3A3C;
+  --green: #30D158;
+  --border: rgba(255, 255, 255, 0.16);
+  --pick: rgba(255, 255, 255, 0.10);
+  --menu-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+  --work: #FF7A5C; --break: #30D158;
+  --field: #2C2C2E; --field-border: rgba(255, 255, 255, 0.16);
+  --blue: #0A84FF;
+  --bar: rgba(38, 38, 40, 0.92); --bar-ink: rgba(255, 255, 255, 0.92); --bar-pick: rgba(255, 255, 255, 0.20);
+  --desk: linear-gradient(160deg, #1B2433 0%, #2A2238 55%, #33291F 100%);
+  --window-shadow: 0 22px 56px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(255, 255, 255, 0.14);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: transparent; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+button, input { font: inherit; color: inherit; }
+
+/* ---------- Menu bar (the right end of it) ---------- */
+.menubar {
+  height: 24px; display: flex; align-items: center; justify-content: flex-end; gap: 2px;
+  padding: 0 10px; background: var(--bar); color: var(--bar-ink);
+  font-size: 13px; font-weight: 500; letter-spacing: -0.1px;
+}
+.mb-item { height: 22px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border-radius: 5px; }
+.mb-item.open { background: var(--bar-pick); }
+.mb-item svg { display: block; }
+.mb-car { opacity: 0.85; display: block; }
+.dark .mb-car { filter: invert(1); opacity: 0.92; }
+.mb-clock { padding: 0 4px 0 6px; white-space: nowrap; }
+
+/* ---------- Desktop scene: the menu bar on top, the panel under the icon ---------- */
+.scene { position: relative; background: var(--desk); overflow: hidden; }
+.scene .menubar { position: relative; z-index: 2; }
+.scene .panel { position: relative; z-index: 3; }
+
+/* ---------- Panel ---------- */
+.panel {
+  width: 344px; padding: 16px 14px 12px;
+  background: var(--bg); border-radius: 14px; box-shadow: var(--menu-shadow);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.head { display: flex; align-items: center; gap: 10px; padding-inline-start: 2px; }
+.logo { width: 36px; height: 36px; flex-shrink: 0; display: block; margin: -2px; }
+.brand { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.brand-name { font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.brand-tag { font-size: 13px; color: var(--sub); }
+
+.groups { display: flex; flex-direction: column; gap: 16px; transition: opacity 0.25s ease; }
+.paused .groups { opacity: 0.45; }
+.group { display: flex; flex-direction: column; gap: 7px; }
+.group-title {
+  margin: 0; padding: 0 14px;
+  font-size: 13px; font-weight: 400; color: var(--sub);
+  text-transform: uppercase; letter-spacing: var(--ls);
+}
+.panel, .window { color: var(--text); }
+.card { background: var(--card); border-radius: 12px; overflow: hidden; }
+.note { padding: 0 14px; font-size: 13px; line-height: 1.35; color: var(--sub); }
+.line { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 8px 6px 14px; }
+.line + .line { border-top: 1px solid var(--sep); margin-left: 14px; padding-left: 0; }
+.label { font-size: 16px; }
+.sub { font-size: 13px; color: var(--sub); }
+.grow { flex-grow: 1; min-width: 0; }
+.text { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+/* Segmented control for the mode: the switch's colours (track = --off, white thumb with its shadow) */
+.seg { display: flex; padding: 2px; border-radius: 10px; background: var(--off); }
+.seg button {
+  flex: 1 1 0; height: 32px; border: 0; border-radius: 8px; background: transparent; padding: 0 4px;
+  font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap;
+}
+.seg button[aria-checked="true"] { background: var(--card); font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14), 0 0 0 0.5px rgba(0, 0, 0, 0.04); }
+.dark .seg button[aria-checked="true"] { background: #636366; }
+
+/* Radio buttons for the mode (the alternative to compare) */
+.radios { display: flex; gap: 6px; justify-content: space-between; padding: 12px 14px; }
+.radio { display: flex; align-items: center; gap: 7px; font-size: 15px; white-space: nowrap; }
+.radio i {
+  width: 18px; height: 18px; flex-shrink: 0; border-radius: 9px; background: var(--field);
+  box-shadow: inset 0 0 0 1px var(--field-border); position: relative;
+}
+.radio.on i { background: var(--green); box-shadow: none; }
+.radio.on i::after { content: ""; position: absolute; inset: 6px; border-radius: 3px; background: #FFFFFF; }
+
+/* Pomodoro */
+.timer { display: flex; flex-direction: column; gap: 1px; }
+.phase { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--sub); text-transform: uppercase; letter-spacing: var(--ls); }
+.dot { width: 8px; height: 8px; border-radius: 4px; background: var(--work); }
+.dot.break { background: var(--break); }
+.dot.idle { background: var(--chev); }
+.time { font-size: 30px; font-weight: 600; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.time.idle { color: var(--sub); }
+.time small { font-size: 15px; font-weight: 400; color: var(--sub); letter-spacing: 0; margin-left: 3px; }
+.timer-line { min-height: 76px; }
+.btns { display: flex; gap: 8px; }
+.btn {
+  height: 32px; padding: 0 14px; border: 0; border-radius: 16px; background: var(--btn);
+  font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.btn.go { background: var(--green); color: #FFFFFF; padding: 0 20px; }
+.fields { display: flex; align-items: center; gap: 7px; font-size: 16px; }
+.fields .gap { width: 14px; }
+.num {
+  width: 46px; height: 30px; border: 0; border-radius: 7px; padding: 0 8px;
+  background: var(--field); box-shadow: inset 0 0 0 1px var(--field-border);
+  font-size: 15px; text-align: right; font-variant-numeric: tabular-nums;
+}
+.card .num { background: var(--bg); box-shadow: inset 0 0 0 1px var(--field-border); }
+
+/* Play now */
+.play { display: flex; align-items: center; gap: 7px; height: 36px; padding: 0 16px 0 13px; font-size: 15px; border-radius: 18px; }
+.play svg { flex-shrink: 0; }
+
+/* Switch: Just the Video's */
+.switch {
+  width: 60px; height: 40px; flex-shrink: 0;
+  border: 0; background: transparent; padding: 0;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.track {
+  width: 51px; height: 31px; border-radius: 16px; padding: 2px;
+  display: flex; align-items: center; background: var(--off);
+}
+.knob { width: 27px; height: 27px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22); }
+.switch[aria-checked="true"] .track { background: var(--green); }
+.switch[aria-checked="true"] .knob { transform: translateX(var(--knob-x)); }
+
+/* Footer: About (small) and Quit */
+.foot { display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 14px; min-height: 24px; }
+.foot a { font-size: 12px; color: var(--sub); text-decoration: none; }
+.foot .quit { font-size: 14px; color: var(--text); font-weight: 500; padding: 4px 8px; border-radius: 6px; }
+
+/* ---------- System-style windows: the first-run alert and About ---------- */
+.window {
+  background: var(--bg); border-radius: 12px; box-shadow: var(--window-shadow);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.alert { width: 272px; padding: 22px 16px 16px; gap: 0; }
+.alert .app-icon { width: 64px; height: 64px; margin-bottom: 12px; }
+.alert h1 { margin: 0 0 6px; font-size: 13px; font-weight: 700; line-height: 1.3; }
+.alert p { margin: 0 0 14px; font-size: 11px; line-height: 1.4; }
+.alert .buttons { align-self: stretch; display: flex; flex-direction: column; gap: 8px; }
+.sysbtn {
+  height: 28px; border: 0; border-radius: 7px; font-size: 13px; font-weight: 500;
+  background: var(--card); box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+}
+.dark .sysbtn { background: #5A5A5E; box-shadow: none; }
+.sysbtn.default { background: var(--blue); color: #FFFFFF; box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.2); }
+.titlebar { align-self: stretch; height: 28px; display: flex; align-items: center; gap: 8px; padding: 0 10px; }
+.titlebar i { width: 12px; height: 12px; border-radius: 6px; background: #FF5F57; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.15); }
+.titlebar i.min, .titlebar i.max { background: var(--off); }
+.about { width: 300px; padding: 0 0 18px; }
+.about .app-icon { width: 80px; height: 80px; margin: 2px 0 8px; }
+.about h1 { margin: 0; font-size: 15px; font-weight: 700; }
+.about .ver { font-size: 11px; color: var(--sub); margin: 3px 0 12px; }
+.about .credits {
+  align-self: stretch; margin: 0 18px; padding: 10px 12px; border-radius: 8px; background: var(--card);
+  font-size: 11px; line-height: 1.45; text-align: center; display: flex; flex-direction: column; gap: 7px;
+}
+.about .credits a { color: var(--blue); text-decoration: none; }
+.about .brandline { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; }
+.about .copy { font-size: 10.5px; color: var(--sub); margin-top: 10px; }
+
+/* ---------- The icon sheet ---------- */
+.sheet { background: #FFFFFF; color: #1C1C1E; padding: 28px 32px 30px; display: flex; flex-direction: column; gap: 26px; }
+.sheet h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.sheet .cap { font-size: 12.5px; color: #6B6B70; line-height: 1.4; }
+.variants { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.variant { display: flex; flex-direction: column; gap: 12px; }
+.big { display: grid; grid-template-columns: 1fr 1fr; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px #E5E5EA; }
+.big div { height: 112px; display: flex; align-items: center; justify-content: center; }
+.big .l { background: #F2F2F7; }
+.big .d { background: #1C1C1E; }
+.big img { width: 144px; height: 81px; }
+.big .d img { filter: invert(1); }
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.bars .menubar { border-radius: 6px; box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.12); }
+.compare { display: flex; gap: 28px; align-items: flex-start; }
+.compare .src { width: 360px; display: flex; flex-direction: column; gap: 8px; }
+.compare .src img { width: 360px; display: block; }
+.compare .pair { display: flex; flex-direction: column; gap: 8px; }
+.compare .pair .row { display: flex; align-items: center; gap: 12px; }
+.compare .pair .row span { width: 170px; font-size: 12.5px; color: #6B6B70; }
+.compare .pair .menubar { width: 320px; border-radius: 6px; box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.12); }

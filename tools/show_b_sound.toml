@@ -1,0 +1,376 @@
+# The sound of show B: one block of numbers per variant, read by tools/show_b_sound.py. Change a number and rebuild
+# that variant (a few seconds; the wavs for the program and the video to listen to):
+#   .venv/bin/python3 tools/show_b_sound.py b
+# Levels are dB against each other (the whole show is then brought to loudness_lufs), times are ms. -99 dB = off.
+# attack_ms / release_ms: the level gets two thirds of the way in that time (a tail falls 9 dB per release_ms).
+# A remark -> the number to move (in the variant's block):
+#   "lift-off louder/softer"   hit_lift.gain_db, ignite.down_db       "the dash"               hit_dash.gain_db, back.gain_db
+#   "the jets' hiss"           down.gain_db, side.gain_db, back.gain_db   "sharper/softer onset"   *.attack_ms, ignite.*
+#   "tail longer/shorter"      down.release_ms (side, back)           "the flip's pulses"      side.gain_db, ignite.side_db
+#   "more/less bass"           *.rumble_db, hit_*.files               "darker/brighter"        *.lowpass_hz, *.dark_hz, *.air_db
+#   "tyres", "motor", "brake", "touchdown"   tyres, motor, brake, touchdown (gain_db)
+#   "all louder/softer"        loudness_lufs                          "wider/narrower", "echo" pan_width, room
+#   "a longer exit right"      tail_s, offscreen_m
+
+[sources]  # name = file (sounds/ in this repository) and the part used (s). All CC0 (public domain); sources in CREDITS.md
+hiss_large = { file = "sounds/hiss_large.mp3", trim = [1.0, 17.0] }   # R19-17 Large Air Hiss with Whistle, craigsmith
+hiss_waves = { file = "sounds/hiss_waves.mp3", trim = [0.5, 12.5] }   # R18-50 Air Hisses in Waves, craigsmith
+steam = { file = "sounds/steam.mp3", trim = [1.05, 1.95] }            # Steam.wav, SukritSen
+rocket = { file = "sounds/rocket.mp3" }                               # Rocket Blast, magnuswaker
+vent_lift = { file = "sounds/vent_lift.wav" }                         # Sfx Whoosh Deep Vent 1 12, Sheyvan
+vent_dash = { file = "sounds/vent_dash.wav" }                         # Sfx Whoosh Deep Vent 1 1, Sheyvan
+slam = { file = "sounds/slam.wav" }                                   # Seismic Slam, magnuswaker
+thump = { file = "sounds/thump.wav" }                                 # Thump; close, TylerAM
+thud = { file = "sounds/thud.wav" }                                   # thud2.wav, Topschool
+
+# ---------------------------------------------------------------------------------------------------------------------
+# A "as at the show": the hiss of compressed gas, realistic and restrained
+[a]
+loudness_lufs = -18.0   # the whole show (both clips) is brought to this integrated loudness (EBU R128)
+peak_dbfs = -1.5        # sample peaks are held under this; the true peak ends under -1 dBTP
+pan_width = 0.6         # 0 = mono, 1 = the car at a screen edge plays from that speaker only
+offscreen_m = 2.0       # past a screen edge the sound fades: -6 dB this far out (m)
+tail_s = 0.3            # clip 2's track runs this long past its last frame (the car gone to the right)
+room = { decay_s = 0.3, wet_db = -20 }   # a small synthetic room: reverb time (s) and level
+
+[a.down]                # the four lift jets: a hiss following their summed thrust while they burn
+files = [{ src = "hiss_large", db = 0, pitch = 1.15 }]   # layered, slow level swings taken out
+gain_db = 0
+thrust_ref = 0.8        # summed thrust that plays at gain_db (lift-off 0.82, hover 0.45, descent 0.2-0.55)
+curve = 0.6             # level = (thrust / thrust_ref) ^ curve
+on_floor = 0.5          # the level the hiss jumps to at the ignition, before the thrust builds (the attack)
+attack_ms = 12
+release_ms = 140        # the tail after the cutoff
+highpass_hz = 120
+lowpass_hz = 12000
+dark_hz = 2500          # the hiss dulls to this below bright_at x thrust_ref (and off the screen)
+bright_at = 0.7
+air_db = -8            # bright noise on top (the recordings have little above 6 kHz)
+rumble_db = -18         # low rumble under the hiss
+rumble_hz = 140
+
+[a.side]                # the side pulses of the flip (one nozzle at a time, short)
+files = [{ src = "hiss_large", db = 0, pitch = 1.6 }, { src = "steam", db = -3, pitch = 1.0 }]
+gain_db = -1
+thrust_ref = 1.0
+curve = 0.6
+on_floor = 0.5
+attack_ms = 6
+release_ms = 70
+highpass_hz = 300
+lowpass_hz = 14000
+dark_hz = 4000
+bright_at = 0.6
+air_db = -12
+rumble_db = -99
+rumble_hz = 140
+
+[a.back]                # the four rear jets of the dash
+files = [{ src = "hiss_large", db = 0, pitch = 0.75 }]
+gain_db = 1
+thrust_ref = 0.56
+curve = 0.6
+on_floor = 0.5
+attack_ms = 10
+release_ms = 160
+highpass_hz = 60
+lowpass_hz = 11000
+dark_hz = 2200
+bright_at = 0.7
+air_db = -12
+rumble_db = -10
+rumble_hz = 130
+
+[a.ignite]              # a valve opening at every ignition: a crack and a low thump (nozzles opening together = one)
+down_db = -3
+side_db = -6
+back_db = -2
+crack_ms = 10
+crack_db = 0
+thump_hz = 60
+thump_ms = 40
+thump_db = -4
+
+[a.cutoff]              # a soft chuff when a group shuts
+down_db = -14
+side_db = -18
+back_db = -99
+ms = 45
+
+[a.hit_lift]            # on the lift-off (the first ignition of the lift jets), over the valve's crack
+files = [{ src = "vent_lift", db = 0 }]
+gain_db = -14
+crack_db = -99          # a whip-like crack on top of the files
+
+[a.hit_dash]            # on the dash (the first ignition of the rear jets)
+files = [{ src = "vent_dash", db = 0 }]
+gain_db = -2
+crack_db = -99
+
+[a.tyres]               # the tyres rolling on the floor: band noise, level with speed while the wheels touch it
+gain_db = -9
+band_hz = [250, 2500]
+speed_ref = 7.0         # m/s that plays at gain_db (the drive-in starts at 7.2 m/s, the dash leaves at 19)
+curve = 1.2
+max = 1.3               # the cap (the dash)
+rotation_am = 0.15      # the level swings this much once a wheel turn
+attack_ms = 40
+release_ms = 120
+
+[a.brake]               # tyre scrub while slowing down (the drive-in, after the touchdown)
+gain_db = -18
+band_hz = [500, 3500]
+decel_ref = 1.0         # m/s2 of braking that plays at gain_db
+attack_ms = 30
+release_ms = 120
+
+[a.motor]               # the electric motor's whine: pitch with speed, level with speed and acceleration
+gain_db = -17
+hz = 240                # at standstill
+hz_per_ms = 75          # + this per m/s
+harmonics = [1.0, 0.35, 0.12]
+speed_ref = 7.0
+accel_ref = 5.0         # m/s2 that plays at gain_db
+by_speed = 0.5          # the share of the level that follows the speed (the rest follows the acceleration)
+attack_ms = 60
+release_ms = 150
+
+[a.touchdown]           # the wheels meet the floor: a thud per axle, the suspension's low whump
+files = [{ src = "thump", db = 0 }]
+gain_db = -6
+suspension_db = -12
+
+# ---------------------------------------------------------------------------------------------------------------------
+# B "cinema": denser, with bass, a whip-like hit on the lift-off and on the dash
+[b]
+loudness_lufs = -18.0
+peak_dbfs = -1.5
+pan_width = 0.85
+offscreen_m = 2.5
+tail_s = 0.45
+room = { decay_s = 0.9, wet_db = -15 }
+
+[b.down]
+files = [{ src = "hiss_large", db = 0, pitch = 0.9 }, { src = "hiss_waves", db = -3, pitch = 0.85 }]
+gain_db = 0
+thrust_ref = 0.8
+curve = 0.5
+on_floor = 0.6
+attack_ms = 6
+release_ms = 220
+highpass_hz = 50
+lowpass_hz = 14000
+dark_hz = 3000
+bright_at = 0.6
+air_db = -12
+rumble_db = -6
+rumble_hz = 120
+
+[b.side]
+files = [{ src = "hiss_large", db = 0, pitch = 1.5 }, { src = "steam", db = -2, pitch = 1.0 }]
+gain_db = 0
+thrust_ref = 1.0
+curve = 0.5
+on_floor = 0.6
+attack_ms = 4
+release_ms = 90
+highpass_hz = 200
+lowpass_hz = 15000
+dark_hz = 4500
+bright_at = 0.5
+air_db = -10
+rumble_db = -16
+rumble_hz = 160
+
+[b.back]
+files = [{ src = "hiss_large", db = 0, pitch = 0.7 }, { src = "hiss_waves", db = -3, pitch = 0.65 }]
+gain_db = 2
+thrust_ref = 0.56
+curve = 0.5
+on_floor = 0.6
+attack_ms = 5
+release_ms = 250
+highpass_hz = 40
+lowpass_hz = 12000
+dark_hz = 2500
+bright_at = 0.6
+air_db = -14
+rumble_db = -4
+rumble_hz = 110
+
+[b.ignite]
+down_db = 0
+side_db = -3
+back_db = 1
+crack_ms = 8
+crack_db = 0
+thump_hz = 50
+thump_ms = 60
+thump_db = 0
+
+[b.cutoff]
+down_db = -12
+side_db = -16
+back_db = -99
+ms = 55
+
+[b.hit_lift]
+files = [{ src = "vent_lift", db = 0 }, { src = "slam", db = -4 }]
+gain_db = 1
+crack_db = -6
+
+[b.hit_dash]
+files = [{ src = "rocket", db = 0 }, { src = "vent_dash", db = -2 }, { src = "slam", db = -3 }]
+gain_db = 3
+crack_db = -4
+
+[b.tyres]
+gain_db = -7
+band_hz = [200, 2500]
+speed_ref = 7.0
+curve = 1.2
+max = 1.4
+rotation_am = 0.15
+attack_ms = 40
+release_ms = 140
+
+[b.brake]
+gain_db = -16
+band_hz = [500, 3500]
+decel_ref = 1.0
+attack_ms = 30
+release_ms = 140
+
+[b.motor]
+gain_db = -15
+hz = 220
+hz_per_ms = 80
+harmonics = [1.0, 0.4, 0.15]
+speed_ref = 7.0
+accel_ref = 5.0
+by_speed = 0.5
+attack_ms = 60
+release_ms = 180
+
+[b.touchdown]
+files = [{ src = "thud", db = 0 }, { src = "thump", db = -4 }]
+gain_db = -3
+suspension_db = -8
+
+# ---------------------------------------------------------------------------------------------------------------------
+# C "soft, for the desktop": quieter and calmer, nothing sudden
+[c]
+loudness_lufs = -24.0   # 6 dB under A and B by design
+peak_dbfs = -6.0
+pan_width = 0.45
+offscreen_m = 1.5
+tail_s = 0.3
+room = { decay_s = 0.4, wet_db = -22 }
+
+[c.down]
+files = [{ src = "hiss_large", db = 0, pitch = 1.0 }]
+gain_db = 0
+thrust_ref = 0.8
+curve = 0.7
+on_floor = 0.3
+attack_ms = 70          # the hiss swells in instead of a hit
+release_ms = 260
+highpass_hz = 150
+lowpass_hz = 6000
+dark_hz = 1800
+bright_at = 1.2         # never fully bright
+air_db = -99
+rumble_db = -99
+rumble_hz = 140
+
+[c.side]
+files = [{ src = "hiss_large", db = 0, pitch = 1.3 }, { src = "steam", db = -10, pitch = 1.0 }]
+gain_db = -2
+thrust_ref = 1.0
+curve = 0.7
+on_floor = 0.3
+attack_ms = 30
+release_ms = 120
+highpass_hz = 250
+lowpass_hz = 7000
+dark_hz = 2500
+bright_at = 1.2
+air_db = -99
+rumble_db = -99
+rumble_hz = 140
+
+[c.back]
+files = [{ src = "hiss_large", db = 0, pitch = 0.8 }]
+gain_db = -1
+thrust_ref = 0.56
+curve = 0.7
+on_floor = 0.3
+attack_ms = 80
+release_ms = 300
+highpass_hz = 80
+lowpass_hz = 5000
+dark_hz = 1500
+bright_at = 1.2
+air_db = -99
+rumble_db = -18
+rumble_hz = 120
+
+[c.ignite]
+down_db = -20
+side_db = -24
+back_db = -16
+crack_ms = 6
+crack_db = -99          # no crack: only a soft low thump
+thump_hz = 55
+thump_ms = 50
+thump_db = 0
+
+[c.cutoff]
+down_db = -99
+side_db = -99
+back_db = -99
+ms = 45
+
+[c.hit_lift]
+files = [{ src = "vent_lift", db = 0 }]
+gain_db = -99
+crack_db = -99
+
+[c.hit_dash]            # a soft low whoosh instead of a hit
+files = [{ src = "vent_dash", db = 0 }]
+gain_db = -12
+crack_db = -99
+lowpass_hz = 1500
+
+[c.tyres]
+gain_db = -11
+band_hz = [200, 1800]
+speed_ref = 7.0
+curve = 1.2
+max = 1.2
+rotation_am = 0.1
+attack_ms = 60
+release_ms = 150
+
+[c.brake]
+gain_db = -24
+band_hz = [400, 2500]
+decel_ref = 1.0
+attack_ms = 40
+release_ms = 150
+
+[c.motor]
+gain_db = -22
+hz = 240
+hz_per_ms = 70
+harmonics = [1.0, 0.25, 0.05]
+speed_ref = 7.0
+accel_ref = 5.0
+by_speed = 0.6
+attack_ms = 80
+release_ms = 200
+
+[c.touchdown]
+files = [{ src = "thump", db = 0 }]
+gain_db = -12
+suspension_db = -16

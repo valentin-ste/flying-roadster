@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Roadster first run</title>
+<link rel="stylesheet" href="roadster.css">
+</head>
+<body>
+<!-- The first launch from outside /Applications (macOS runs a temporary copy): offer to move. ?theme=dark -->
+<div id="root"></div>
+<script src="mock.js"></script>
+<script>
+  const root = document.getElementById("root");
+  root.className = theme;
+  root.innerHTML = `<div class="scene" id="board" style="width:440px">${menubar({ open: false })}
+    <div style="display:flex;justify-content:center;padding:44px 0 56px">
+      <div class="window alert">
+        <img class="app-icon" src="icon/app-icon-placeholder.svg" alt="">
+        <h1>Move Roadster to Applications?</h1>
+        <p>macOS is running a temporary copy of Roadster, so it can’t open at login. Roadster will move itself to the Applications folder and start again.</p>
+        <div class="buttons"><button class="sysbtn default">Move to Applications</button><button class="sysbtn">Not Now</button></div>
+      </div>
+    </div></div>`;
+</script>
+</body>
+</html>

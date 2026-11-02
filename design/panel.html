@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Roadster panel</title>
+<link rel="stylesheet" href="roadster.css">
+</head>
+<body>
+<!-- panel.html?state=off|pomo-ready|pomo-work|pomo-break|hourly|random|mute&theme=light|dark&mode=seg|radio&icon=solid|wheels|outline -->
+<div id="root"></div>
+<script src="mock.js"></script>
+<script>
+  const root = document.getElementById("root");
+  root.className = theme;
+  root.innerHTML = scene(panel(q("state", "pomo-work"), { modeStyle: q("mode", "seg") }), { icon: q("icon", "wheels") });
+</script>
+</body>
+</html>

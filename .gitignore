@@ -1,0 +1,9 @@
+# built or downloaded here, never committed
+out/
+dist/
+node_modules/
+.venv/
+assets/
+work/
+__pycache__/
+.DS_Store
