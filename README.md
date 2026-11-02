@@ -7,14 +7,14 @@ drives onto your desktop, lifts off on jets of steam, flips, lands in its own cl
   <img src="docs/roadster.webp" width="960" alt="The show: a silver roadster drives in, lifts off on jets of steam, flips in the air, lands in a cloud and dashes off to the right.">
 </p>
 
-<p align="center"><a href="https://flying-roadster.pages.dev"><b>Watch it fly on the website →</b></a></p>
+<p align="center"><a href="https://flying-roadster-app.pages.dev"><b>Watch it fly on the website →</b></a></p>
 
 The animation above plays the show over a plain sky so that it fits a page. The app plays it over your desktop and
 your windows, with a transparent background and the car's shadow on the desktop.
 
 ## Download
 
-- **[flying-roadster.pages.dev](https://flying-roadster.pages.dev)**: the Download for Mac button, or
+- **[flying-roadster-app.pages.dev](https://flying-roadster-app.pages.dev)**: the Download for Mac button, or
 - **[GitHub Releases](https://github.com/valentin-ste/flying-roadster/releases/latest)**: `Roadster.zip` (the release also
   holds `roadster-clips.zip`, the two movies a build from source downloads).
 
