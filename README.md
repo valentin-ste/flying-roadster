@@ -1,6 +1,6 @@
 # Roadster
 
-**A car that flies across your Mac.** A free menu bar app for macOS: on a timer or at a click, a photoreal roadster
+**A car that flies across your desktop.** A free app for macOS and Windows: on a timer or at a click, a photoreal roadster
 drives onto your desktop, lifts off on jets of steam, flips, lands in its own cloud and dashes away, with sound.
 
 <p align="center">
@@ -14,11 +14,15 @@ your windows, with a transparent background and the car's shadow on the desktop.
 
 ## Download
 
-- **[flying-roadster-app.pages.dev](https://flying-roadster-app.pages.dev)**: the Download for Mac button, or
-- **[GitHub Releases](https://github.com/valentin-ste/flying-roadster/releases/latest)**: `Roadster.zip` (the release also
-  holds `roadster-clips.zip`, the two movies a build from source downloads).
+- **[flying-roadster-app.pages.dev](https://flying-roadster-app.pages.dev)**: Download for macOS or Download for Windows, or
+- **[GitHub Releases](https://github.com/valentin-ste/flying-roadster/releases/latest)**: `Roadster.zip` for the Mac,
+  `Roadster-Setup.exe` for Windows (the [v1.0 release](https://github.com/valentin-ste/flying-roadster/releases/tag/v1.0)
+  also holds `roadster-clips.zip`, the two movies a Mac build from source downloads).
 
-macOS 13 Ventura or later, Apple silicon or Intel. 18.6 MB.
+| | Mac | Windows |
+|---|---|---|
+| File | `Roadster.zip`, 18.6 MB | `Roadster-Setup.exe`, 5.9 MB |
+| Needs | macOS 13 Ventura or later, Apple silicon or Intel | Windows 10 or 11, 64-bit (x64); tested on Windows 10 22H2 |
 
 ## Features
 
@@ -26,14 +30,16 @@ macOS 13 Ventura or later, Apple silicon or Intel. 18.6 MB.
   own). *Every hour*: on the hour, by your Mac's clock. *Random*: at a random moment after the last show, 30 to 90
   minutes by default or any range from 1 minute up to 10 hours.
 - **Play now** whenever you want it, **Mute** for the same flight without sound, **Open at login** (on by default).
-- **Lives in the menu bar**, no Dock icon. Click the little car at the top of the screen to choose when it flies.
+- **Lives in the menu bar**, no Dock icon. Click the little car at the top of the screen to choose when it flies. On
+  Windows it lives in the notification area by the clock, with no taskbar button.
 - **Never in your way.** Clicks pass right through the car, it never takes the keyboard, and it flies over every
-  Space and over full-screen apps. No shows while your Mac sleeps, its screens are off, the screensaver runs or the
+  Space and over full-screen apps. No shows while your computer sleeps, its screens are off, the screensaver runs or the
   screen is locked; a pomodoro waits meanwhile.
 - **Photoreal.** Rendered in Blender's Cycles from a real-scale physics simulation: volumetric steam, motion blur, the
   car's shadow on your desktop, a soundtrack built from the same flight.
-- **Private and small.** The app never goes online: no account, no ads, no analytics. One universal app (Apple
-  silicon and Intel), Apple's frameworks only.
+- **Private and small.** The app never goes online: no account, no ads, no analytics. On the Mac one universal app
+  (Apple silicon and Intel), Apple's frameworks only; on Windows a 6 MB installer on the system's own WebView2, which
+  is unloaded between shows (about 6 MB of memory while the app waits).
 
 <p align="center">
   <picture>
@@ -60,6 +66,21 @@ anywhere else, and Open at login works from the Applications folder only.
 
 To uninstall, turn Open at login off, quit Roadster from its panel and move it from Applications to the Trash; its
 settings are in `~/Library/Preferences/com.valentinste.roadster.plist`.
+
+## Install on Windows
+
+1. **Run the installer.** Open `Roadster-Setup.exe` from Downloads. If the browser says the file isn't commonly
+   downloaded, choose Keep.
+2. **Run anyway.** Windows SmartScreen says it protected your PC. Click **More info**, then **Run anyway**. The
+   installer needs no administrator rights: Roadster goes to your user's own programs folder.
+3. **Find the car.** Roadster starts and opens its panel by the clock. Later, click the car there; if Windows hides
+   it under the ^ arrow, drag it onto the taskbar.
+
+**Why the warning?** The installer isn't signed with a paid code-signing certificate, so Windows can't confirm who made
+it. As on the Mac, the code is open, and you can build the installer yourself (below).
+
+To uninstall, use **Settings → Apps → Roadster**; it takes its Open at login entry with it. The settings are in
+`%APPDATA%\com.valentinste.roadster\settings.json`.
 
 ## How it works
 
@@ -156,6 +177,25 @@ dist/Roadster.app/Contents/MacOS/Roadster --snapshot DIR   # the panel in every 
 npm ci && npm test                                         # the physics against its references (Node 20 or later)
 ```
 
+### Windows
+
+```sh
+windows/build.sh
+```
+
+The Windows app is [Tauri 2](https://tauri.app) (Rust) with the panel and the show as web pages in WebView2; the
+schedule is the Mac's, case for case, in plain Rust (`windows/schedule`). It is built on a Mac, cross-compiled the way
+Tauri's guide "Windows installer from Linux and macOS" describes. You need [rustup](https://rustup.rs) with the target
+`x86_64-pc-windows-msvc`, `cargo install cargo-xwin`, `brew install llvm nsis` and Node 20 or later. The script first
+runs the schedule's checks on the Mac (the Mac's 107 and 15 of Windows' own), downloads the show once from the
+website (`fly-2016.webm`, VP9 with alpha and Opus, 4.5 MB, checked by its SHA-256), then builds the NSIS installer:
+`windows/dist/Roadster-Setup.exe`. The first build downloads the MSVC runtime and the Windows SDK into `work/windows/`
+(about 1 GB, under Microsoft's licence) and takes about 9 minutes on an M1 Pro; later builds about a minute.
+
+`windows/build.sh --test` adds **Self-test** (plays the show and writes `Roadster-report.txt` on the desktop: frames,
+transparency checked on the screen's pixels, sound, memory) and **Mode check** (the schedule on a clock 60 times
+faster, `Roadster-modes.txt`) to the tray icon's right-click menu.
+
 ## Re-render the show from scratch
 
 Everything in the release can be made again from this repository and free downloads from three sites. It takes a Mac,
@@ -241,7 +281,13 @@ tools/
   show_b_sound.py/.toml  the sound
   mac/                   show_video.swift (the movies), render_icon.swift (the app icon)
 sounds/                  the nine CC0 recordings the sound is made of
-design/                  the icons and the panel's mock-ups
+design/                  the icons and the panel's mock-ups (the Windows panel uses its roadster.css as is)
+windows/
+  build.sh               builds windows/dist/Roadster-Setup.exe on a Mac
+  schedule/              the schedule and its timer in plain Rust, with the Mac's checks (cargo test)
+  src-tauri/             the app: tray, panel, show window, Windows' events (sleep, lock, screens), installer hooks
+  ui/                    the panel and the show as pages
+  tools/                 the tray icons, checks of the pages in a headless browser
 docs/                    the pictures of this page
 ```
 
@@ -254,6 +300,7 @@ docs/                    the pictures of this page
 | HDRI "Studio Small 09" | Sergej Majboroda, Poly Haven | CC0 |
 | Nine sound recordings (`sounds/`) | craigsmith, SukritSen, magnuswaker, Sheyvan, TylerAM, Topschool, Freesound | CC0 |
 | Rapier physics engine | Dimforge | Apache-2.0 |
+| Tauri and the Rust crates of the Windows app (`windows/src-tauri/Cargo.lock`) | their authors | MIT or Apache-2.0, each its own |
 | The code of this repository | VALENTIN STE | [MIT](LICENSE) |
 | The show's movies and frames, its sound mix, the icons, the brand | VALENTIN STE | © 2026, only as part of this app ([LICENSE-MEDIA.md](LICENSE-MEDIA.md)) |
 
@@ -266,11 +313,7 @@ brand are © 2026 VALENTIN STE and may be used only as part of this program ([LI
 Third-party assets keep their own licences ([CREDITS.md](CREDITS.md)).
 
 Not affiliated with Tesla, Inc. Tesla and Roadster are trademarks of Tesla, Inc. Mac and macOS are trademarks of
-Apple Inc.
-
-## Windows
-
-In development.
+Apple Inc. Windows is a trademark of Microsoft Corporation.
 
 ## Author
 

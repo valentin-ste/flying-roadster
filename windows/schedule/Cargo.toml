@@ -1,0 +1,18 @@
+[package]
+name = "roadster-schedule"
+version = "0.3.0"
+description = "Roadster's schedule of the three modes, without Windows (a port of mac/Sources/Schedule.swift)"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+test = false
+doctest = false
+
+# The Mac's checks (mac/Tests/ScheduleTests.swift) one to one, as one program that counts them:
+#   cargo test --manifest-path windows/schedule/Cargo.toml        (windows/build.sh runs it before every build)
+#   ... -- -v                                                      prints the schedule's log
+[[test]]
+name = "schedule"
+path = "tests/schedule.rs"
+harness = false

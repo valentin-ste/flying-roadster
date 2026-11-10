@@ -7,3 +7,10 @@ assets/
 work/
 __pycache__/
 .DS_Store
+# the Windows app's build (windows/build.sh): Rust's output, the show and the panel's stylesheet copied in
+windows/src-tauri/target/
+windows/schedule/target/
+windows/src-tauri/gen/
+windows/ui/show/
+windows/ui/roadster.css
+windows/ui/app-icon.svg

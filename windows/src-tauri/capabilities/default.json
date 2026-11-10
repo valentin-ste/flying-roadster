@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "show",
+  "description": "The app's windows (the shows, the panel; each made when needed, with a label of its own): the app's own commands and core defaults.",
+  "windows": ["show-*", "panel-*"],
+  "permissions": ["core:default"]
+}

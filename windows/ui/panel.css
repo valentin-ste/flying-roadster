@@ -1,0 +1,44 @@
+/* The Windows panel: design/roadster.css as it is (the tokens, the cards, the switch, the segments), and here only what
+   a window of its own on Windows needs. The window is the panel: 344 x 506 CSS px, its corners and shadow are the
+   system's (Windows 11 rounds them; Windows 10 has square flyouts). */
+
+/* Windows' own face: Segoe UI Variable on Windows 11 (Text for UI sizes, Display for the big time), Segoe UI on 10.
+   Every line's height is set, never the font's "normal": Segoe UI's normal line is 1.33 of its size on Windows (its
+   Windows metrics, 2210 + 514 of 2048), the design's 1.2 (the Mac's), and 0.2.0's panel came out 510 px for 506 on
+   Windows 10 (Valentin, 10.11). With 1.2 set the panel is 506 px whatever the face's metrics (check_panel.py measures
+   it with Selawik as it is and with Segoe UI's Windows metrics). The lines that set their own (.time, .note, the
+   credits) keep them; buttons and fields take it through roadster.css's `font: inherit`. */
+body {
+  font-family: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.2;
+}
+.time {
+  font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
+
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+body { user-select: none; cursor: default; }
+#root { height: 100%; }
+.panel { width: auto; height: 100%; border-radius: 0; box-shadow: none; }
+
+/* The mode's block keeps the height of the tallest mode (all three are laid in one cell, the others unseen), and what
+   the window has left goes under it: the panel never changes height (Valentin, 02.11). */
+.groups { flex: 1 1 auto; min-height: 0; }
+.modes { display: grid; align-items: start; }
+.modes > .group { grid-area: 1 / 1; }
+.modes > .group[aria-hidden="true"] { visibility: hidden; }
+
+/* The Mac's switch moves in 0.18 s */
+.knob { transition: transform 0.18s ease-out; }
+.track { transition: background-color 0.18s ease-out; }
+
+.foot a { cursor: pointer; }
+
+/* About inside the panel (design/about.html, the Mac's About window without its title bar): the same size as the
+   panel, its block in the middle, Back where About was. */
+.about-panel { justify-content: space-between; }
+.about-body.about { width: auto; padding: 0; flex: 1 1 auto; justify-content: center; }
+.about-body { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.about-body .credits { align-self: stretch; }
+.about-body .credits a.brandline { color: var(--blue); }
+.num { user-select: text; }

@@ -69,6 +69,12 @@ room.
   the Applications folder finds the original of a translocated copy with Security.framework's SecTranslocate
   functions, the way the public-domain [LetsMove](https://github.com/potionfactory/LetsMove) library does; its code is
   not used.
+- The Windows app is built with [Tauri](https://tauri.app) 2 (MIT or Apache-2.0) and the Rust crates listed in
+  `windows/src-tauri/Cargo.lock`, each under its own licence (MIT or Apache-2.0 for the ones it uses directly: tauri,
+  its autostart and single-instance plugins, serde, serde_json, windows, windows-registry; the schedule uses none). It runs on Windows'
+  own WebView2. Its show is the website's `fly-2016.webm`, encoded from the same frames with FFmpeg (libvpx-vp9,
+  libopus). Its panel is the Mac's mock-up stylesheet `design/roadster.css`; the panel's text on Windows is Segoe UI,
+  the system's font, not included.
 - The physics runs on [Rapier](https://rapier.rs) (`@dimforge/rapier3d-compat`, Apache-2.0), installed by npm.
 - The show is rendered with [Blender](https://www.blender.org) 5.2 (Cycles; Eevee for the car's silhouettes) and
   assembled with Blender's own Python (OpenImageIO, OpenColorIO and its AgX view), Python with numpy, Pillow and SciPy,
